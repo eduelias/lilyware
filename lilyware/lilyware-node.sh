@@ -14,7 +14,7 @@ if ! $GETH version | grep $VERIFIED_VERSION ; then
 	echo ''
 fi
 
-NETWORKID=517
+NETWORKID=72
 DATADIR=~/.ethereum-lilyware-data-$NETWORKID
 #ETHERBASE=0x8400264c2e3d5096aea709076af77d2e3fd3f169 #prd
 ETHERBASE=0x%WALLET% #dev

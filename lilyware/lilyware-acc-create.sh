@@ -14,7 +14,7 @@ if ! $GETH version | grep $VERIFIED_VERSION ; then
 	echo ''
 fi
 
-NETWORKID=517
+NETWORKID=72
 DATADIR=~/.ethereum-lilyware-data-$NETWORKID
 MINEDIR=~/.ethereum-lilyware-mine-$NETWORKID
 

@@ -12,7 +12,7 @@ GO_ARCHIVE=go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz
 NETWORKID=72
 DATADIR=~/.ethereum-lilyware-data-$NETWORKID
 
-alias ls='ls -la --color=auto'
+echo "APT::Acquire::Queue-Mode \"access\";\r\nAPT::Acquire::Retries 3;" | sudo tee --append /etc/apt/apt.conf.d/99parallel
 
 sudo add-apt-repository -y ppa:ubuntu-lxc/lxd-stable
 sudo add-apt-repository -y ppa:ethereum/ethereum
@@ -38,7 +38,7 @@ sudo npm rebuild
 sudo npm install browserify -g --silent
 sudo npm install -g pm2 --silent
 sudo ln -s /usr/bin/nodejs /usr/local/bin/node
-sudo npm install -g npm@4.6.1
+sudo npm install -g npm
 cd ~
 
 # echo "------------------------------------------------------------------------"
@@ -116,10 +116,6 @@ cd ~/
 
 cd lilyware
 rm lilyware-node-template.sh
-
-sudo chown vagrant:vagrant ~/.npm
-sudo chown vagrant:vagrant ~/.config 
-
 cd ~/
 echo "------------------------------------------------------------------------"
 echo " 			  			INSTALLING AUXILIARY TOOLS	  					  "
@@ -128,7 +124,7 @@ echo "installing eth-explorer..."
 git clone "https://github.com/etherparty/explorer"
 cd ~/explorer
 sed -i 's/-a localhost//g' package.json
-sudo chown vagrant:vagrant ~/explorer -R
+sudo chown vagrant:vagrant ~ -R 
 npm install --silent
 #bower install --allow-root --slient
 pm2 start npm -s --name "eth-explorer" -- start
@@ -137,9 +133,9 @@ cd ~
 echo "------------------------------------------------------------------------"
 echo "installing browser-solidity... (this may take a while)"
 git clone "https://github.com/ethereum/browser-solidity/"
-#sudo chown vagrant:vagrant ~/browser-solidity -R 
+#sudo chown vagrant:vagrant ~ -R 
 cd browser-solidity
-sudo npm install --silent
+npm install --silent
 sudo npm run build --silent
 pm2 start npm -s --name "browser-solidity" -- run serve
 cd ~

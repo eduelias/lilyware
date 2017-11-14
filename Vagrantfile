@@ -10,19 +10,24 @@ Vagrant.configure("2") do |config|
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
+  config.ssh.insert_key = false;
+  config.ssh.private_key_path = ["keys/private.pem","~/.vagrant.d/insecure_private_key"]
+  
   (1..1).each do |i|
     config.vm.define "node-#{i}" do |node|
         #node1.vm.box = "hashicorp/precise64"
         #node1.vm.box = "dakami/ethdev"
-        node.vm.box = "ubuntu/xenial64"      
+        node.vm.box = "ubuntu/trusty64"      
         node.vm.network "forwarded_port", guest: 8545, host: (8500 + i)
-        node.vm.network "forwarded_port", guest: 22, host: (2200 + 1), auto_correct: true, id: "ssh"      
+        node.vm.network "forwarded_port", guest: 22, host: (2200 + 1), auto_correct: true, id: "ssh"              
+        node.vm.network "forwarded_port", guest: 8080, host: (8080 + i)
+        node.vm.network "forwarded_port", guest: 8000, host: (8000 + 1)
     end
   end
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-config.vm.box = "hashicorp/precise64"
+  # config.vm.box = "hashicorp/precise64"
 
   # Windows 32bit specific
   # Turn off virtualization acceleration (VT-x), PAE, nested paging
@@ -45,9 +50,6 @@ end
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
-config.vm.network "forwarded_port", guest: 8545, host: 8545
-config.vm.network "forwarded_port", guest: 8080, host: 8080
-config.vm.network "forwarded_port", guest: 8000, host: 8000
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -100,8 +102,14 @@ end
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
+  
+  config.vm.provision "file", source: "keys/key.pub", destination: "~/.ssh/authorized_keys"
+#   config.vm.provision "shell", inline: <<-EOC
+#   sudo sed -i -e "\\#PasswordAuthentication yes# s#PasswordAuthentication yes#PasswordAuthentication no#g" /etc/ssh/sshd_config
+#   sudo service ssh restart
+# EOCcd ..
 
-config.vm.provision "file", source:"lilyware", destination: "$HOME/lilyware"
-config.vm.provision "shell", name: "bootstrap", privileged: false, run: "once", path: "bootstrap.sh"
+  config.vm.provision "file", source:"lilyware", destination: "$HOME/lilyware"
+  config.vm.provision "shell", name: "bootstrap", privileged: false, run: "once", path: "bootstrap.sh"
 
 end
