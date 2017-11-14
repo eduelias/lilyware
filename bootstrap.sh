@@ -1,56 +1,77 @@
 #!/bin/bash -e
 
+case $(id -u) in
+    0) sudo -u vagrant -i $0
+esac
+
 GETH_VERSION=1.5.5
 GO_VERSION=1.7.5
 GO_OS=linux
-GO_ARCH=386
+GO_ARCH=amd64
 GO_ARCHIVE=go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz
-NETWORKID=517
+NETWORKID=72
 DATADIR=~/.ethereum-lilyware-data-$NETWORKID
 
+alias ls='ls -la --color=auto'
+
+sudo add-apt-repository -y ppa:ubuntu-lxc/lxd-stable
+sudo add-apt-repository -y ppa:ethereum/ethereum
+
 sudo apt-get update
-sudo apt-get install -y vim git screen htop mc build-essential libgmp3-dev unzip curl
-curl -sL https://deb.nodesource.com/setup | sudo bash -
+sudo apt-get -y upgrade
+
+echo "------------------------------------------------------------------------"
+echo "installing other dependencies"
+sudo apt-get install -y vim git screen htop mc build-essential libgmp3-dev unzip curl golang ethereum
+
+echo "------------------------------------------------------------------------"
+echo "installing node 8"
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs
-sudo npm install npm -g --silent
+
 cd ~
 
 echo "------------------------------------------------------------------------"
 echo "installing pm2 (npm deamon)..."
-sudo npm install pm2 -g --silent
+sudo npm rebuild
+#npm install bower -g
+sudo npm install browserify -g --silent
+sudo npm install -g pm2 --silent
+sudo ln -s /usr/bin/nodejs /usr/local/bin/node
+sudo npm install -g npm@4.6.1
 cd ~
 
-echo "------------------------------------------------------------------------"
-echo "installing go-lang..."
-rm -rf ~/.temp && mkdir ~/.temp && cd ~/.temp
-wget --quiet https://storage.googleapis.com/golang/${GO_ARCHIVE} && sudo tar -C /usr/local -xzf ${GO_ARCHIVE}
+# echo "------------------------------------------------------------------------"
+# echo "installing go-lang..."
+# rm -rf ~/.temp && mkdir ~/.temp && cd ~/.temp
+# wget --quiet https://storage.googleapis.com/golang/${GO_ARCHIVE} && sudo tar -C /usr/local -xzf ${GO_ARCHIVE}
 
-rm -rf $HOME/go && mkdir $HOME/go
-sudo echo "export PATH=/usr/local/go/bin:$PATH" >> ~/.profile
-sudo echo "export GOPATH=\$HOME/go" >> ~/.profile
-sudo echo "export PATH=\$PATH:\$GOPATH/bin" >> ~/.profile
-source ~/.profile
+# rm -rf $HOME/go && mkdir $HOME/go
+# sudo echo "export PATH=/usr/local/go/bin:$PATH" >> ~/.profile
+# sudo echo "export GOPATH=\$HOME/go" >> ~/.profile
+# sudo echo "export PATH=\$PATH:\$GOPATH/bin" >> ~/.profile
+# source ~/.profile
 
 echo "------------------------------------------------------------------------"
 echo "printing env..."
 env
 
-echo "------------------------------------------------------------------------"
-echo "installing go-ethereum..."
+# echo "------------------------------------------------------------------------"
+# echo "installing go-ethereum..."
 
-wget --quiet https://github.com/ethereum/go-ethereum/archive/v${GETH_VERSION}.zip
-unzip v${GETH_VERSION}.zip
-cd go-ethereum-${GETH_VERSION}
-make geth
-sudo rm -rf /usr/bin/geth && sudo ln -s ${PWD}/build/bin/geth /usr/bin/geth
+# wget --quiet https://github.com/ethereum/go-ethereum/archive/v${GETH_VERSION}.zip
+# unzip v${GETH_VERSION}.zip
+# cd go-ethereum-${GETH_VERSION}
+# make geth
+# sudo rm -rf /usr/bin/geth && sudo ln -s ${PWD}/build/bin/geth /usr/bin/geth
 
 echo "------------------------------------------------------------------------"
 echo "installing lilyware-node..."
 
 # get and install the lilyware node archive
-cd ~ && rm -rf ~/lilyware && mkdir ~/lilyware && cd lilyware
-rm -rf lilyware.zip && cp /vagrant/lilyware.zip .
-unzip lilyware.zip
+cd ~/lilyware
+#rm -rf lilyware.zip && cp /vagrant/lilyware.zip .
+#unzip lilyware.zip
 chmod +x lilyware-node.sh
 chmod +x lilyware-miner.sh
 chmod +x lilyware-acc-create.sh
@@ -95,6 +116,10 @@ cd ~/
 
 cd lilyware
 rm lilyware-node-template.sh
+
+sudo chown vagrant:vagrant ~/.npm
+sudo chown vagrant:vagrant ~/.config 
+
 cd ~/
 echo "------------------------------------------------------------------------"
 echo " 			  			INSTALLING AUXILIARY TOOLS	  					  "
@@ -103,15 +128,19 @@ echo "installing eth-explorer..."
 git clone "https://github.com/etherparty/explorer"
 cd ~/explorer
 sed -i 's/-a localhost//g' package.json
+sudo chown vagrant:vagrant ~/explorer -R
+npm install --silent
+#bower install --allow-root --slient
 pm2 start npm -s --name "eth-explorer" -- start
 cd ~
 
 echo "------------------------------------------------------------------------"
 echo "installing browser-solidity... (this may take a while)"
 git clone "https://github.com/ethereum/browser-solidity/"
+#sudo chown vagrant:vagrant ~/browser-solidity -R 
 cd browser-solidity
-npm install --silent
-npm run build --silent
+sudo npm install --silent
+sudo npm run build --silent
 pm2 start npm -s --name "browser-solidity" -- run serve
 cd ~
 
