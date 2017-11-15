@@ -22,6 +22,7 @@ Vagrant.configure("2") do |config|
         node.vm.network "forwarded_port", guest: 22, host: (2200 + 1), auto_correct: true, id: "ssh"              
         node.vm.network "forwarded_port", guest: 8080, host: (8080 + i)
         node.vm.network "forwarded_port", guest: 8000, host: (8000 + 1)
+        #node.vm.network "forwarded_port", guest: 8000, host: (7000 + 1)
     end
   end
 

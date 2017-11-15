@@ -34,4 +34,4 @@ else
 fi
 
 $GETH --datadir $DATADIR init ../genesis-block-lilyware.json
-$GETH --unlock 0 --password password --datadir $DATADIR --nat none --networkid $NETWORKID --bootnodes leave-me-alone --rpc --identity lilynode%ID% --rpcaddr 0.0.0.0 --port 3030%ID% --rpcport 854%ID% --rpccorsdomain '*' --etherbase $ETHERBASE &
+$GETH --unlock 0 --password password --datadir $DATADIR --nat none --networkid $NETWORKID --bootnodes leave-me-alone --identity lilynode%ID%  --port 3030%ID% --rpc --rpcaddr 127.0.0.1 --rpcport 854%ID% --rpccorsdomain '*' --rpcapi "eth,web3" --etherbase $ETHERBASE &

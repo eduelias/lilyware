@@ -11,4 +11,4 @@ ETHERBASE=0x%WALLET% #dev
 mkdir -p $DATADIR
 ln -f ../static-nodes.json $DATADIR
 geth --datadir $DATADIR init ../genesis-block-lilyware.json
-geth --unlock 0 --password password --datadir $DATADIR --nat none --networkid $NETWORKID --bootnodes leave-me-alone --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --rpcport 8545 --port 31313 --etherbase $ETHERBASE js mineOnDemand.js
+geth --unlock 0 --password password --datadir $DATADIR --nat none --networkid $NETWORKID --bootnodes leave-me-alone --rpc --rpcaddr 0.0.0.0 --rpccorsdomain '*' --rpcport 8546 --port 31313 --etherbase $ETHERBASE js mineOnDemand.js

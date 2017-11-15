@@ -100,19 +100,19 @@ find ./ -type f -name "lilyware-node.sh" | xargs sed -i -e 's/%ID%/'${NODENUMBER
 chmod +x lilyware-node.sh
 cd ~/
 
-echo "------------------------------------------------------------------------"
-echo "Creating node 2..."
-NODENUMBER=2
-cd ~
-rm -rf lilyware-${NODENUMBER}
-cp -R lilyware lilyware-${NODENUMBER}
-cd lilyware-${NODENUMBER} 
-rm -rf lilyware-node.sh 
-rm -rf lilyware-miner.sh 
-mv lilyware-node-template.sh lilyware-node.sh
-find ./ -type f -name "lilyware-node.sh" | xargs sed -i -e 's/%ID%/'${NODENUMBER}'/g'
-chmod +x lilyware-node.sh
-cd ~/
+# echo "------------------------------------------------------------------------"
+# echo "Creating node 2..."
+# NODENUMBER=2
+# cd ~
+# rm -rf lilyware-${NODENUMBER}
+# cp -R lilyware lilyware-${NODENUMBER}
+# cd lilyware-${NODENUMBER} 
+# rm -rf lilyware-node.sh 
+# rm -rf lilyware-miner.sh 
+# mv lilyware-node-template.sh lilyware-node.sh
+# find ./ -type f -name "lilyware-node.sh" | xargs sed -i -e 's/%ID%/'${NODENUMBER}'/g'
+# chmod +x lilyware-node.sh
+# cd ~/
 
 cd lilyware
 rm lilyware-node-template.sh
@@ -139,6 +139,12 @@ npm install --silent
 sudo npm run build --silent
 pm2 start npm -s --name "browser-solidity" -- run serve
 cd ~
+
+cd ~/lilyware-1/
+pm2 start --name "ETH1" ./lilyware-node.sh
+
+cd ~/lilyware-2/
+pm2 start --name "ETH2" ./lilyware-node.sh
 
 pm2 list
 
